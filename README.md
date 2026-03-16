@@ -31,7 +31,7 @@ FitScan은 업로드된 영상(MP4 등)에서 프레임을 추출하고, 딥러�
 ```mermaid
 flowchart TB
     subgraph Client["🖥️ Client Layer"]
-        UI["Dashboard UI\n(React + Vite)"]
+        UI["Dashboard UI<br/>(React + Vite)"]
         API_CLIENT["REST API Consumer"]
     end
 
@@ -39,7 +39,7 @@ flowchart TB
         UPLOAD["/api/v1/videos/upload"]
         ANALYZE["/api/v1/videos/{id}/analyze"]
         RESULT["/api/v1/reports/{id}"]
-        WS["WebSocket\n/ws/analysis/{id}"]
+        WS["WebSocket<br/>/ws/analysis/{id}"]
     end
 
     subgraph Kafka["📨 Kafka Event Bus"]
@@ -63,18 +63,18 @@ flowchart TB
     end
 
     subgraph Pipeline["🔬 Analysis Modules"]
-        EXTRACT["Frame Extractor\n(OpenCV)"]
-        DETECT["Clothing Detector\n(YOLOv8)"]
-        SEGMENT["Clothing Segmenter\n(Mask R-CNN / SAM)"]
-        COLOR["Color Analyzer\n(K-Means + HSV)"]
-        SIZE["Size Estimator\n(MediaPipe Pose)"]
-        CLASSIFY["Category Classifier\n(ResNet / EfficientNet)"]
+        EXTRACT["Frame Extractor<br/>(OpenCV)"]
+        DETECT["Clothing Detector<br/>(YOLOv8)"]
+        SEGMENT["Clothing Segmenter<br/>(Mask R-CNN / SAM)"]
+        COLOR["Color Analyzer<br/>(K-Means + HSV)"]
+        SIZE["Size Estimator<br/>(MediaPipe Pose)"]
+        CLASSIFY["Category Classifier<br/>(ResNet / EfficientNet)"]
     end
 
     subgraph Storage["💾 Storage Layer"]
-        PG[("PostgreSQL\n분석 결과/메타데이터")]
-        MINIO["MinIO / Local FS\n영상·프레임 저장"]
-        REDIS[("Redis\n캐시/진행률")]
+        PG[("PostgreSQL<br/>분석 결과/메타데이터")]
+        MINIO["MinIO / Local FS<br/>영상·프레임 저장"]
+        REDIS[("Redis<br/>캐시/진행률")]
     end
 
     UI --> UPLOAD & RESULT & WS
@@ -117,7 +117,7 @@ flowchart TB
 ```mermaid
 flowchart LR
     subgraph Producer["이벤트 발행"]
-        P1["FastAPI\n영상 업로드"]
+        P1["FastAPI<br/>영상 업로드"]
         P2["Frame Extractor"]
         P3["Clothing Detector"]
         P4["Segmenter"]
@@ -134,12 +134,12 @@ flowchart LR
     end
 
     subgraph Consumer["이벤트 소비"]
-        C1["Airflow DAG\nTrigger"]
+        C1["Airflow DAG<br/>Trigger"]
         C2["Detection Task"]
         C3["Segmentation Task"]
-        C4["Color / Size /\nClassification Tasks"]
-        C5["Report Writer\n+ Notification"]
-        C6["WebSocket\nProgress Push"]
+        C4["Color / Size /<br/>Classification Tasks"]
+        C5["Report Writer<br/>+ Notification"]
+        C6["WebSocket<br/>Progress Push"]
     end
 
     P1 --> T1 --> C1
@@ -169,17 +169,17 @@ flowchart LR
 flowchart TB
     subgraph DAG["clothing_analysis_dag"]
         direction TB
-        SENSOR["KafkaSensor\nvideo.uploaded 대기"]
-        EXTRACT["extract_frames\nOpenCV 프레임 추출"]
-        DETECT["detect_clothing\nYOLOv8 감지"]
+        SENSOR["KafkaSensor<br/>video.uploaded 대기"]
+        EXTRACT["extract_frames<br/>OpenCV 프레임 추출"]
+        DETECT["detect_clothing<br/>YOLOv8 감지"]
         BRANCH["분기"]
-        SEGMENT["segment_clothing\nMask R-CNN / SAM"]
-        CLASSIFY["classify_category\nEfficientNet"]
-        COLOR["analyze_color\nK-Means + HSV"]
-        SIZE["estimate_size\nMediaPipe Pose"]
+        SEGMENT["segment_clothing<br/>Mask R-CNN / SAM"]
+        CLASSIFY["classify_category<br/>EfficientNet"]
+        COLOR["analyze_color<br/>K-Means + HSV"]
+        SIZE["estimate_size<br/>MediaPipe Pose"]
         JOIN["join"]
-        AGGREGATE["aggregate_results\n리포트 생성 & DB 저장"]
-        NOTIFY["publish_completion\nKafka 이벤트 발행"]
+        AGGREGATE["aggregate_results<br/>리포트 생성 & DB 저장"]
+        NOTIFY["publish_completion<br/>Kafka 이벤트 발행"]
     end
 
     SENSOR --> EXTRACT --> DETECT --> BRANCH
@@ -210,14 +210,14 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-    A["📹 영상 업로드\n(MP4, AVI, MOV)"] -->|Kafka: video.uploaded| B["🎞️ 프레임 추출\nOpenCV\nN fps 샘플링"]
-    B -->|Kafka: frames.extracted| C["👔 의류 감지\nYOLOv8\nDeepFashion2 FT"]
-    C -->|Kafka: clothing.detected| D["✂️ 세그멘테이션\nMask R-CNN\nor SAM"]
+    A["📹 영상 업로드<br/>(MP4, AVI, MOV)"] -->|Kafka: video.uploaded| B["🎞️ 프레임 추출<br/>OpenCV<br/>N fps 샘플링"]
+    B -->|Kafka: frames.extracted| C["👔 의류 감지<br/>YOLOv8<br/>DeepFashion2 FT"]
+    C -->|Kafka: clothing.detected| D["✂️ 세그멘테이션<br/>Mask R-CNN<br/>or SAM"]
     D -->|Kafka: clothing.segmented| E["🎨 색상 분석"]
     D -->|Kafka: clothing.segmented| F["📏 사이즈 추정"]
     C --> G["🏷️ 카테고리 분류"]
-    E & F & G --> H["📊 결과 집계\n& 리포트 생성"]
-    H -->|Kafka: analysis.completed| I["💾 DB 저장\n& API 응답"]
+    E & F & G --> H["📊 결과 집계<br/>& 리포트 생성"]
+    H -->|Kafka: analysis.completed| I["💾 DB 저장<br/>& API 응답"]
 ```
 
 ### Stage별 기술 상세
@@ -253,11 +253,11 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    MASK["세그멘테이션\n마스크 적용"] --> HSV["BGR → HSV\n색공간 변환"]
-    HSV --> KMEANS["K-Means\nClustering\n(k=3~5)"]
-    KMEANS --> DOMINANT["Dominant Color\n추출 (Top-3)"]
-    DOMINANT --> NAMING["색상 네이밍\n(CSS Named Colors\n매핑)"]
-    NAMING --> RATIO["색상 비율\n계산"]
+    MASK["세그멘테이션<br/>마스크 적용"] --> HSV["BGR → HSV<br/>색공간 변환"]
+    HSV --> KMEANS["K-Means<br/>Clustering<br/>(k=3~5)"]
+    KMEANS --> DOMINANT["Dominant Color<br/>추출 (Top-3)"]
+    DOMINANT --> NAMING["색상 네이밍<br/>(CSS Named Colors<br/>매핑)"]
+    NAMING --> RATIO["색상 비율<br/>계산"]
 ```
 
 | 항목 | 내용 |
@@ -272,11 +272,11 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    POSE["MediaPipe Pose\n33 Keypoints"] --> LANDMARK["어깨·허리·엉덩이\n키포인트 추출"]
-    BBOX["의류 바운딩 박스\n(YOLO)"] --> RELATIVE["신체 대비\n의류 비율 계산"]
+    POSE["MediaPipe Pose<br/>33 Keypoints"] --> LANDMARK["어깨·허리·엉덩이<br/>키포인트 추출"]
+    BBOX["의류 바운딩 박스<br/>(YOLO)"] --> RELATIVE["신체 대비<br/>의류 비율 계산"]
     LANDMARK --> RELATIVE
-    RELATIVE --> SIZE_MAP["비율 → 사이즈\n매핑 테이블\n(S/M/L/XL)"]
-    SIZE_MAP --> CONFIDENCE["추정 신뢰도\n산출"]
+    RELATIVE --> SIZE_MAP["비율 → 사이즈<br/>매핑 테이블<br/>(S/M/L/XL)"]
+    SIZE_MAP --> CONFIDENCE["추정 신뢰도<br/>산출"]
 ```
 
 | 항목 | 내용 |
