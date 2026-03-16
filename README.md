@@ -484,8 +484,3 @@ gantt
 - [Segment Anything Model (SAM)](https://segment-anything.com/)
 - [MMFashion Toolbox](https://github.com/open-mmlab/mmfashion)
 
----
-
-## 📜 License
-
-MIT License — see [LICENSE](LICENSE) for details.
